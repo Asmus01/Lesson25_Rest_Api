@@ -1,0 +1,56 @@
+plugins {
+    id 'java-library'
+    id "io.qameta.allure" version "2.11.2"
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+allure {
+    report {
+        version.set("2.27.0")
+    }
+    adapter { // отвечает за появление папочки build/allure-results
+        aspectjWeaver.set(true) //обработка аннотации @Step
+        frameworks {
+            junit5 { //название фреймворка
+                adapterVersion.set("2.27.0") //версия интеграции фреймворка и Allure
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    testImplementation(
+            "com.codeborne:selenide:6.16.1",
+            "org.junit.jupiter:junit-jupiter:5.10.2",
+            "org.slf4j:slf4j-simple:2.0.6",
+            "com.github.javafaker:javafaker:1.0.2",
+            "io.qameta.allure:allure-selenide:2.27.0",
+            "io.github.bonigarcia:webdrivermanager:5.8.0", // решает вопрос совместимости с драйверами
+            'org.aeonbits.owner:owner:1.0.12',
+            'org.assertj:assertj-core:3.26.0',
+            'io.rest-assured:rest-assured:5.4.0'
+
+    )
+}
+
+test {
+    useJUnitPlatform{}
+    systemProperties(System.getProperties())
+}
+
+
+task remote_test(type: Test) {
+    useJUnitPlatform {
+        includeTags("remote")
+    }
+}
